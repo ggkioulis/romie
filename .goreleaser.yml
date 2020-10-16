@@ -32,3 +32,38 @@ builds:
     mod_timestamp: "{{ .CommitTimestamp }}"
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser
+
+dockers:
+  # You can have multiple Docker images.
+  -
+    # GOOS of the built binary that should be used.
+    goos: linux
+
+    # GOARCH of the built binary that should be used.
+    goarch: amd64
+
+    # Name templates of the built binaries that should be used.
+    binaries:
+    - romie
+
+    # Templates of the Docker image names.
+    image_templates:
+      - "ge0rr/romie:latest"
+      - "ge0rr/romie:{{ .Tag }}"
+
+    # Skips the docker push. Could be useful if you also do draft releases.
+    # If set to auto, the release will not be pushed to the docker repository
+    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
+    # Defaults to false.
+    skip_push: false
+
+    # Path to the Dockerfile (from the project root).
+    dockerfile: Dockerfile
+
+    # Template of the docker build flags.
+    build_flag_templates:
+    - "--pull"
+    - "--label=org.opencontainers.image.created={{.Date}}"
+    - "--label=org.opencontainers.image.title={{.ProjectName}}"
+    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+    - "--label=org.opencontainers.image.version={{.Version}}"
